@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCR Tool</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+    <link rel="stylesheet" href="/static/CSS/main.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fas fa-eye"></i> OCR Tool</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#singlePageModal">
+                            <i class="fas fa-file-alt"></i> Single Page Results
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#multiPageModal">
+                            <i class="fas fa-file-pdf"></i> Multi-Page Results
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container main-container" style="margin-top: 80px;">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <!-- Upload Section -->
+                <div class="upload-section">
+                    <h2 class="text-center mb-4" style="color: var(--text-color); font-weight: 700;">
+                        Upload Documents for OCR Processing
+                    </h2>
+                    <p class="text-center mb-4" style="color: #6b7280;">
+                        Drag and drop your files here or click to browse. Supports PDF, PNG, JPG, and TIFF formats.
+                    </p>
+                    
+                    <div class="upload-area" id="uploadArea">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <h4 class="mb-3">Drop files here or click to upload</h4>
+                        <input type="file" class="form-control d-none" id="fileInput" multiple accept=".pdf,.png,.jpg,.jpeg,.tiff">
+                        <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                            <i class="fas fa-upload me-2"></i>Choose Files
+                        </button>
+                    </div>
+                    
+                    <!-- Progress Bar -->
+                    <div class="progress mt-4 d-none" id="uploadProgress">
+                        <div class="progress-bar" role="progressbar" style="width: 0%"></div>
+                    </div>
+                    
+                    <!-- Success Message -->
+                    <div class="alert alert-success mt-4 d-none" id="successAlert">
+                        <i class="fas fa-check-circle me-2"></i>
+                        Files uploaded successfully! Processing initiated.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Single Page Modal -->
+    <div class="modal fade" id="singlePageModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-file-alt me-2"></i>Single Page Document Results
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Document Name</th>
+                                    <th>Status</th>
+                                    <th>Confidence</th>
+                                    <th>Extracted Text</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="singlePageTableBody">
+                                <tr>
+                                    <td>invoice_001.pdf</td>
+                                    <td><span class="status-badge status-completed">Completed</span></td>
+                                    <td>96%</td>
+                                    <td>Invoice #12345 - Total Amount: $1,250.00 Date: 2024-01-15...</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i> View
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-success">
+                                            <i class="fas fa-download"></i> Export
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>receipt_002.jpg</td>
+                                    <td><span class="status-badge status-processing">Processing</span></td>
+                                    <td>--</td>
+                                    <td>Processing...</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-secondary" disabled>
+                                            <i class="fas fa-spinner fa-spin"></i> Wait
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>document_003.png</td>
+                                    <td><span class="status-badge status-completed">Completed</span></td>
+                                    <td>89%</td>
+                                    <td>Contract Agreement between Party A and Party B...</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i> View
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-success">
+                                            <i class="fas fa-download"></i> Export
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <nav>
+                        <ul class="pagination">
+                            <li class="page-item">
+                                <a class="page-link" href="#" onclick="changePage('single', -1)">
+                                    <i class="fas fa-chevron-left"></i>
+                                </a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#" onclick="changePage('single', 1)">
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Multi-Page Modal -->
+    <div class="modal fade" id="multiPageModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-file-pdf me-2"></i>Multi-Page Document Results
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Document Name</th>
+                                    <th>Page</th>
+                                    <th>Status</th>
+                                    <th>Confidence</th>
+                                    <th>Extracted Text</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="multiPageTableBody">
+                                <tr>
+                                    <td>manual_guide.pdf</td>
+                                    <td>1</td>
+                                    <td><span class="status-badge status-completed">Completed</span></td>
+                                    <td>94%</td>
+                                    <td>Chapter 1: Introduction to the System...</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i> View
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-success">
+                                            <i class="fas fa-download"></i> Export
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>manual_guide.pdf</td>
+                                    <td>2</td>
+                                    <td><span class="status-badge status-completed">Completed</span></td>
+                                    <td>97%</td>
+                                    <td>Chapter 2: System Requirements and Setup...</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-primary">
+                                            <i class="fas fa-eye"></i> View
+                                        </button>
+                                        <button class="btn btn-sm btn-outline-success">
+                                            <i class="fas fa-download"></i> Export
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>report_2024.pdf</td>
+                                    <td>1</td>
+                                    <td><span class="status-badge status-processing">Processing</span></td>
+                                    <td>--</td>
+                                    <td>Processing...</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-secondary" disabled>
+                                            <i class="fas fa-spinner fa-spin"></i> Wait
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>brochure.pdf</td>
+                                    <td>1</td>
+                                    <td><span class="status-badge status-error">Error</span></td>
+                                    <td>--</td>
+                                    <td>Failed to process - Low image quality</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-outline-danger">
+                                            <i class="fas fa-redo"></i> Retry
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Pagination -->
+                    <nav>
+                        <ul class="pagination">
+                            <li class="page-item">
+                                <a class="page-link" href="#" onclick="changePage('multi', -1)">
+                                    <i class="fas fa-chevron-left"></i>
+                                </a>
+                            </li>
+                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                            <li class="page-item"><a class="page-link" href="#">4</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="#" onclick="changePage('multi', 1)">
+                                    <i class="fas fa-chevron-right"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/JS/main.js"></script>
+</body>
+</html>
