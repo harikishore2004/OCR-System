@@ -1,59 +1,49 @@
 
-// File upload functionality
-const uploadArea = document.getElementById('uploadArea');
-const fileInput = document.getElementById('fileInput');
-const uploadProgress = document.getElementById('uploadProgress');
-const successAlert = document.getElementById('successAlert');
+const submitbutton = document.getElementById('FileSubmitButton');
 
-// Drag and drop functionality
-uploadArea.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    uploadArea.classList.add('dragover');
-});
 
-uploadArea.addEventListener('dragleave', () => {
-    uploadArea.classList.remove('dragover');
-});
+submitbutton.addEventListener('click', async (e) => {
+    const allowed_files = ['application/pdf', 'image/tiff'];
+    const file = document.getElementById("fileInput").files[0]
+    if (!file) return;
 
-uploadArea.addEventListener('drop', (e) => {
-    e.preventDefault();
-    uploadArea.classList.remove('dragover');
-    const files = e.dataTransfer.files;
-    handleFileUpload(files);
-});
+    if (!allowed_files.includes(file.type)) {
+        data = { "message": "Invalid File Format", "category": "danger" };
+        showToast(data);
+        e.target.value = '';
+        return;
+    }
 
-uploadArea.addEventListener('click', () => {
-    fileInput.click();
-});
+    if (file.size > 10 * 1024 * 1024) {
+        data = { "message": "File size is greater then 10MB", "category": "danger" };
+        showToast(data);
+    }
 
-fileInput.addEventListener('change', (e) => {
-    handleFileUpload(e.target.files);
-});
+    const formdata = new FormData();
+    formdata.append("file", file);
+    try {
+        const response = await fetch("http://127.0.0.1:8000/upload", {
+            method: "POST",
+            body: formdata,
+        });
 
-function handleFileUpload(files) {
-    if (files.length === 0) return;
-
-    uploadProgress.classList.remove('d-none');
-    const progressBar = uploadProgress.querySelector('.progress-bar');
-
-    // Simulate upload progress
-    let progress = 0;
-    const interval = setInterval(() => {
-        progress += Math.random() * 10;
-        if (progress >= 100) {
-            progress = 100;
-            clearInterval(interval);
-            setTimeout(() => {
-                uploadProgress.classList.add('d-none');
-                successAlert.classList.remove('d-none');
-                progressBar.style.width = '0%';
-            }, 500);
+        if (!response.ok) {
+            const error = await response.json();
+            console.error("Server returned error:", error.detail);
+            return;
         }
-        progressBar.style.width = progress + '%';
-    }, 200);
-}
+        const result = await response.json();
+        showToast(result.message, result.category)
+        console.log("uploaded")
+    }
+    catch (error) {
+        console.error("Upload Failed", error)
+    }
 
-// Pagination functionality
+
+});
+
+
 function changePage(type, direction) {
     const currentPage = document.querySelector(`#${type}PageModal .page-item.active .page-link`);
     const currentPageNum = parseInt(currentPage.textContent);
@@ -66,7 +56,6 @@ function changePage(type, direction) {
         newPageNum = Math.max(currentPageNum - 1, 1);
     }
 
-    // Update active page
     allPages.forEach((page, index) => {
         if (index + 1 === newPageNum) {
             page.classList.add('active');
@@ -75,11 +64,9 @@ function changePage(type, direction) {
         }
     });
 
-    // In a real application, you would load the appropriate page data here
     console.log(`${type} page navigation: Page ${newPageNum}`);
 }
 
-// Add click handlers for pagination numbers
 document.querySelectorAll('.pagination .page-link').forEach(link => {
     if (!link.innerHTML.includes('chevron')) {
         link.addEventListener('click', function (e) {
@@ -99,7 +86,34 @@ document.querySelectorAll('.pagination .page-link').forEach(link => {
     }
 });
 
-// Auto-hide success alert after 5 seconds
-setTimeout(() => {
-    successAlert.classList.add('d-none');
-}, 5000);
+
+function showToast(message, category = "info") {
+    const flashContainer = document.getElementById("flash-container");
+
+    let bgClass = "text-bg-info";
+    if (category === "success") bgClass = "text-bg-success";
+    else if (category === "danger" || category === "error") bgClass = "text-bg-danger";
+    else if (category === "warning") bgClass = "text-bg-warning";
+
+    const toastHTML = `
+        <div class="toast align-items-center ${bgClass} border-0 mb-2" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body fw-bold fs-5">${message}</div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    `;
+
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = toastHTML.trim();
+    const toastElement = tempDiv.firstChild;
+    flashContainer.appendChild(toastElement);
+
+    const toast = new bootstrap.Toast(toastElement, { delay: 5000 });
+    toast.show();
+
+    toastElement.addEventListener("hidden.bs.toast", () => {
+        toastElement.remove();
+    });
+}
+
