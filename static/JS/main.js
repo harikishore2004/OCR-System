@@ -35,6 +35,7 @@ submitbutton.addEventListener('click', async (e) => {
         const result = await response.json();
         showToast(result.message, result.category)
         console.log("uploaded")
+        document.getElementById("fileInput").value = "";
     }
     catch (error) {
         console.error("Upload Failed", error)
@@ -111,9 +112,9 @@ function showToast(message, category = "info") {
 
     const toast = new bootstrap.Toast(toastElement, { delay: 5000 });
     toast.show();
-
     toastElement.addEventListener("hidden.bs.toast", () => {
         toastElement.remove();
     });
+
 }
 

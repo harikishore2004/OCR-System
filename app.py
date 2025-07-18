@@ -26,5 +26,6 @@ async def upload_file(file: UploadFile = File(...)):
 
     file_path, ext = SaveFile(file, file.filename)
     image_path = Converter(file_path, ext)
-    print(image_path)
+    print("File Path -> ", file_path)
+    print("Images Path -> ",image_path)
     return JSONResponse(content={"message": "File Uploaded", "category": "success"}, status_code=200)
