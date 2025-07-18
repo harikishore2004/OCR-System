@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
     <link rel="stylesheet" href="/static/CSS/main.css">
 </head>
+
 <body>
     <nav class="navbar navbar-expand-lg navbar-light fixed-top">
         <div class="container">
@@ -38,36 +40,23 @@
         <div class="row justify-content-center">
             <div class="col-lg-10">
                 <!-- Upload Section -->
-                <div class="upload-section">
-                    <h2 class="text-center mb-4" style="color: var(--text-color); font-weight: 700;">
-                        Upload Documents for OCR Processing
-                    </h2>
-                    <p class="text-center mb-4" style="color: #6b7280;">
-                        Drag and drop your files here or click to browse. Supports PDF, PNG, JPG, and TIFF formats.
-                    </p>
-                    
-                    <div class="upload-area" id="uploadArea">
-                        <div class="upload-icon">
-                            <i class="fas fa-cloud-upload-alt"></i>
+                <div class="container mt-5">
+                    <div class="card shadow-sm p-4">
+                        <h4 class="text-center mb-3" style="font-weight: 600; color: var(--text-color);">
+                            Upload Documents
+                        </h4>
+
+                        <div id="uploadArea" class="d-flex flex-column align-items-center">
+                            <input type="file" class="form-control mb-3" id="fileInput" accept=".pdf,.tiff"
+                                style="max-width: 300px;">
+
+                            <button class="btn btn-primary px-4" id="FileSubmitButton">
+                                <i class="fas fa-upload me-2"></i>Submit
+                            </button>
                         </div>
-                        <h4 class="mb-3">Drop files here or click to upload</h4>
-                        <input type="file" class="form-control d-none" id="fileInput" multiple accept=".pdf,.png,.jpg,.jpeg,.tiff">
-                        <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
-                            <i class="fas fa-upload me-2"></i>Choose Files
-                        </button>
-                    </div>
-                    
-                    <!-- Progress Bar -->
-                    <div class="progress mt-4 d-none" id="uploadProgress">
-                        <div class="progress-bar" role="progressbar" style="width: 0%"></div>
-                    </div>
-                    
-                    <!-- Success Message -->
-                    <div class="alert alert-success mt-4 d-none" id="successAlert">
-                        <i class="fas fa-check-circle me-2"></i>
-                        Files uploaded successfully! Processing initiated.
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
@@ -137,7 +126,7 @@
                             </tbody>
                         </table>
                     </div>
-                    
+
                     <!-- Pagination -->
                     <nav>
                         <ul class="pagination">
@@ -242,7 +231,7 @@
                             </tbody>
                         </table>
                     </div>
-                    
+
                     <!-- Pagination -->
                     <nav>
                         <ul class="pagination">
@@ -266,8 +255,12 @@
             </div>
         </div>
     </div>
+    <div id="flash-container" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055; max-width: 350px;">
+    </div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="/static/JS/main.js"></script>
 </body>
+
 </html>
