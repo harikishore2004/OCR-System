@@ -1,6 +1,7 @@
 <p align="center" style="display: flex; align-items: center; justify-content: center;">
   <img src="./static/favicon.ico" width="32" height="32" style="vertical-align: middle; margin-right: 10px;" />
-  <span style="font-size: 28px; font-weight: bold;">OCR Web Application</span>
+  <br>
+  <h1 style="font-size: 28px; font-weight: bold;">OCR Web Application</h1>
 </p>
 
 <p align="center">
