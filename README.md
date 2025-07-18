@@ -1,6 +1,5 @@
 <p align="center" style="display: flex; align-items: center; justify-content: center;">
-  <img src="./static/favicon.ico" width="32" height="32" style="vertical-align: middle; margin-right: 10px;" />
-  <br>
+  <img src="./static/favicon.ico" width="42" height="42" style="vertical-align: middle; margin-right: 10px;" />
   <h1 style="font-size: 28px; font-weight: bold;">OCR Web Application</h1>
 </p>
 
@@ -12,7 +11,6 @@
   <img src="https://img.shields.io/badge/License-MIT-yellow.svg" />
 </p>
 
----
 
 This project is a Python-based web application that extracts text from PDF or TIFF documents using Optical Character Recognition (OCR). It is designed to streamline the process of uploading documents, extracting structured text data (including bounding box coordinates), and displaying the results in a user-friendly UI. The extracted data is also stored in a PostgreSQL database for further processing and analysis.
 
