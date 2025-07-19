@@ -4,6 +4,7 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from src.util import SaveFile
 from src.ImageConverter import Converter
+from src.TextExtractor import Extractor
 
 
 app = FastAPI()
@@ -26,6 +27,8 @@ async def upload_file(file: UploadFile = File(...)):
 
     file_path, ext = SaveFile(file, file.filename)
     image_path = Converter(file_path, ext)
+    
+    Extractor(image_path)
     print("File Path -> ", file_path)
     print("Images Path -> ",image_path)
     return JSONResponse(content={"message": "File Uploaded", "category": "success"}, status_code=200)
