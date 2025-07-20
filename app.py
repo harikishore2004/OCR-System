@@ -5,12 +5,18 @@ from fastapi.templating import Jinja2Templates
 from src.util import SaveFile
 from src.ImageConverter import Converter
 from src.TextExtractor import Extractor
+from src.DataBase import SessionLocal, CreateTables
 
 
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
+
+
+@app.on_event("startup")
+def on_startup():
+    CreateTables()
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request:Request):
@@ -28,7 +34,14 @@ async def upload_file(file: UploadFile = File(...)):
     file_path, ext = SaveFile(file, file.filename)
     image_path = Converter(file_path, ext)
     
-    Extractor(image_path)
+    text_data = Extractor(image_path)
     print("File Path -> ", file_path)
     print("Images Path -> ",image_path)
+    for i, text in enumerate(text_data):
+        print(f"Page {i+1} Data -----------------------------")
+        for j in text:
+            print(j['text'])
+            
+        print(" ")
+    print("Pages = ", len(text_data))
     return JSONResponse(content={"message": "File Uploaded", "category": "success"}, status_code=200)

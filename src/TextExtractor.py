@@ -1,13 +1,19 @@
 import pytesseract
-from PIL import Image
+from PIL import Image, ImageDraw
 from collections import defaultdict
 
+# def DrawBox(image: Image.Image, boxes: list, save_path: str):
+#     draw = ImageDraw.Draw(image)
+#     for box in boxes:
+#         x, y, w, h = box['x'], box['y'], box['width'], box['height']
+#         draw.rectangle([x, y, x+w, y+h], fill='green', width=1)
+        
+#     image.save(save_path)
     
 def Extractor(image_paths:list) -> list[dict]:
-    line_result = []
-    global image
-
+    output = []
     for path in image_paths:  
+        line_result = []
         image = Image.open(path) 
         ocr_data = pytesseract.image_to_data(image=image, output_type=pytesseract.Output.DICT)
         
@@ -25,7 +31,8 @@ def Extractor(image_paths:list) -> list[dict]:
                     'height': ocr_data['height'][i]
                 }
                 lines[key].append(value)
-                
+         
+       
         
         for word_list in lines.values():
             line_text = ' '.join([w['text'] for w in word_list])
@@ -42,6 +49,7 @@ def Extractor(image_paths:list) -> list[dict]:
             width = x_max - x_min
             height = y_max - y_min
                         
+            
             line_result.append({
                 'text': line_text,
                 'x': x_min,
@@ -49,8 +57,10 @@ def Extractor(image_paths:list) -> list[dict]:
                 'width': width,
                 'height': height
             })
-            
-    print(line_result)
+        
+            # DrawBox(image=image, boxes=line_result, save_path=path)
+        output.append(line_result)
+    return output
                 
         
         
