@@ -30,6 +30,7 @@ submitbutton.addEventListener('click', async (e) => {
         if (!response.ok) {
             const error = await response.json();
             console.error("Server returned error:", error.detail);
+            showToast(error.message, error.category)
             return;
         }
         const result = await response.json();
