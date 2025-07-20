@@ -1,7 +1,8 @@
 from sqlalchemy import create_engine, Integer, String, Column, TIMESTAMP, ForeignKey
 from sqlalchemy.orm import sessionmaker, declarative_base
+import os
 
-Database_URI = "postgresql+psycopg2://ocruser:ocrpass@localhost:5432/ocrdb"
+Database_URI = os.getenv("DATABASE_URL")
 
 engine = create_engine(Database_URI, echo=True)
 
