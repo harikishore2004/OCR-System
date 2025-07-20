@@ -6,8 +6,9 @@ from sqlalchemy.orm import Session
 from src.util import SaveFile
 from src.ImageConverter import Converter
 from src.TextExtractor import Extractor
-from src.DataBase import SessionLocal, CreateTables
+from src.DataBase import SessionLocal, CreateTables, OCR_Results, Files
 from src.DbOperations import InsertOcrResults
+from collections import defaultdict
 
 
 app = FastAPI()
@@ -64,3 +65,49 @@ async def upload_file(file: UploadFile = File(...), db:Session = Depends(get_db)
             status_code=e.status_code,
             content={"message": e.detail, "category": "error"}
         )
+
+@app.get("/fetchdata")
+def fetch_data(db:Session = Depends(get_db)):
+    
+    try:
+        files = db.query(Files).all()
+        rows = db.query(OCR_Results).all()
+    except Exception as e:
+        print(e)
+        return JSONResponse(
+            status_code=500,
+            content={"message": "Data Fetch Falied!"}
+        )
+        
+    file_map = {f.id:{"file_name": f.file_name, "page_count": f.page_count} for f in files}
+    
+    singelpage_doc = defaultdict(lambda:defaultdict(list))
+    multipage_doc = defaultdict(lambda:defaultdict(list))
+    
+
+    for row in rows:
+        file_data = file_map.get(row.file_id)
+        if not file_data:
+            continue
+        
+        entry = {
+            "line_text": row.line_text,
+            "x": row.x,
+            "y": row.y,
+            "width": row.width,
+            "height": row.height,
+            "timestamp": row.timestamp.isoformat() if row.timestamp else None
+            
+        }
+        
+        file_name = file_data["file_name"]
+        page_count = file_data["page_count"]
+        
+        target_dict = singelpage_doc if page_count==1 else multipage_doc
+        
+        target_dict[file_name][str(row.page_number)].append(entry)
+        
+    return JSONResponse({
+        "single_page_doc": singelpage_doc,
+        "multi_page_doc": multipage_doc
+    })
