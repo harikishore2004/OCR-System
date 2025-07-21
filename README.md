@@ -6,7 +6,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.10%2B-blue.svg" />
   <img src="https://img.shields.io/badge/FastAPI-0.100%2B-brightgreen.svg" />
-  <img src="https://img.shields.io/badge/OCR-Tesseract%20%7C%20PaddleOCR-orange" />
+  <img src="https://img.shields.io/badge/OCR-Tesseract-orange" />
   <img src="https://img.shields.io/badge/Database-PostgreSQL-blue" />
   <img src="https://img.shields.io/badge/docker-image-blue?logo=docker" />
 </p>
