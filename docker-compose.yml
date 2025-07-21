@@ -1,0 +1,29 @@
+version: '3.9'
+
+services:
+  ocr-app:
+    build: .
+    container_name: ocr_app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - postgres-db
+    volumes:
+      - ./OCR-SYSTEM:/ocr_app
+    environment:
+      - DATABASE_URL=postgresql://ocruser:ocrpass@postgres-db:5432/ocrdb
+
+  postgres-db:
+    image: postgres:14
+    container_name: container_postgres_db
+    environment:
+      POSTGRES_DB: ocrdb
+      POSTGRES_USER: ocruser
+      POSTGRES_PASSWORD: ocrpass
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
