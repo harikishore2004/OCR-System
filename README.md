@@ -7,10 +7,10 @@
   <img src="https://img.shields.io/badge/Python-3.10%2B-blue.svg" />
   <img src="https://img.shields.io/badge/FastAPI-0.100%2B-brightgreen.svg" />
   <img src="https://img.shields.io/badge/OCR-Tesseract-orange" />
+  <img src="https://img.shields.io/badge/OCR-PaddleOCR-blue" />
   <img src="https://img.shields.io/badge/Database-PostgreSQL-blue" />
   <img src="https://img.shields.io/badge/docker-image-blue?logo=docker" />
 </p>
-
 
 This project is a Python-based web application that extracts text from PDF or TIFF documents using Optical Character Recognition (OCR). It is designed to streamline the process of uploading documents, extracting structured text data (including bounding box coordinates), and displaying the results in a user-friendly UI. The extracted data is also stored in a PostgreSQL database for further processing and analysis.
 
@@ -20,4 +20,4 @@ This project is a Python-based web application that extracts text from PDF or TI
 - **OCR Engine:** PaddleOCR or Tesseract (line-level bounding box extraction)
 - **Frontend:** HTML, CSS, JavaScript (Bootstrap UI)
 - **Database:** PostgreSQL
-- **File Format
+- \*\*File Format

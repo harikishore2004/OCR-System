@@ -25,6 +25,7 @@ window.addEventListener('DOMContentLoaded', FetchData);
 submitbutton.addEventListener('click', async (e) => {
     const allowed_files = ['application/pdf', 'image/tiff'];
     const file = document.getElementById("fileInput").files[0]
+    const engine = document.getElementById("ocrEngineSelect").value;
     if (!file) return;
 
     if (!allowed_files.includes(file.type)) {
@@ -41,6 +42,7 @@ submitbutton.addEventListener('click', async (e) => {
 
     const formdata = new FormData();
     formdata.append("file", file);
+    formdata.append("engine", engine);
     try {
         const response = await fetch("http://127.0.0.1:8000/upload", {
             method: "POST",
@@ -140,36 +142,6 @@ function showToast(message, category = "info") {
 
 }
 
-function PopulateSingleLines() {
-    const tbody = document.getElementById("singlePageLinesTableBody")
-    const doctitle = document.getElementById("docTitle").querySelector("span");
-
-    const docs = ocr_data["single_page_doc"];
-    for (let docname in docs) {
-        doctitle.innerText = docname;
-
-        const pages = ocr_data["single_page_doc"][docname]
-        for (let page in pages) {
-            const lines = pages[page]
-            lines.forEach((line, index) => {
-                const tr = document.createElement("tr");
-                tr.innerHTML = `
-                    <td>${index + 1}</td>
-                    <td>${line.line_text}</td>
-                    <td>${line.x}</td>
-                    <td>${line.y}</td>
-                    <td>${line.width}</td>
-                    <td>${line.height}</td>
-                    <td>${line.timestamp}</td>
-                `;
-                tbody.appendChild(tr);
-                console.log("appended")
-            });
-        }
-
-    }
-}
-
 function PopulateSinglePageDocs() {
     const tablecontainer = document.getElementById("tables-container1")
     const docs = ocr_data["single_page_doc"];
@@ -185,7 +157,7 @@ function PopulateSinglePageDocs() {
     else {
         for (let docname in docs) {
             const heading = document.createElement("h5");
-            heading.innerText = docname;
+            heading.innerText = `${docname} | Engine: ${docname.engine}`;
             heading.classList.add("mt-4", "text-primary", "fw-bold");
             tablecontainer.appendChild(heading);
 

@@ -1,12 +1,12 @@
-from fastapi import FastAPI, Request, File, UploadFile, HTTPException, Depends
+from fastapi import FastAPI, Request, File, UploadFile, HTTPException, Depends, Form
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from src.util import SaveFile
 from src.ImageConverter import Converter
-from src.TextExtractor import Extractor
-from src.DataBase import SessionLocal, CreateTables, OCR_Results, Files
+from src.TextExtractor import TeserractExtractor, PaddleExtractor
+from src.DataBaseSchema import Files, OCR_Results, SessionLocal, CreateTables
 from src.DbOperations import InsertOcrResults
 from collections import defaultdict
 
@@ -35,25 +35,37 @@ async def read_root(request:Request):
     })
     
 @app.post("/upload")
-async def upload_file(file: UploadFile = File(...), db:Session = Depends(get_db)):
+async def upload_file(file: UploadFile = File(...), db:Session = Depends(get_db), engine: str = Form(...)):
     
     try:
            
         allowed_types = ["application/pdf", "image/tiff"]  
         if file.content_type not in allowed_types:
             raise HTTPException(status_code = 400, detail=f"{file.content_type} is not supported")
+        if engine not in ["paddleocr", "tesseract"]:
+            raise HTTPException(status_code=400, detail=f"{engine} is not supported")
+        
         
         #save the uploaded documents
         file_path, ext = SaveFile(file, file.filename) 
+        
         #converts the documents to .png format
         image_path = Converter(file_path, ext) 
-        #Extract the text
-        ocr_result = Extractor(image_path)
+        
+        #Extract the text 
+        if(engine == "tesseract"):
+            ocr_result = TeserractExtractor(image_path)
+        elif(engine == "paddleocr"):
+            ocr_result = PaddleExtractor(image_paths=image_path)
+            
         #Databased insertion
-        InsertOcrResults(db=db, page_count=len(image_path), file_name=file.filename, ocr_result=ocr_result)
+        InsertOcrResults(db=db, page_count=len(image_path), file_name=file.filename,engine=engine, ocr_result=ocr_result)
         
         print("File Path -> ", file_path)
         print("Images Path -> ",image_path)
+        #print(ocr_result)
+        print(f"{engine} Result _________________________________")
+        print(ocr_result)
         
         return JSONResponse(
             status_code = 200,
@@ -79,7 +91,8 @@ def fetch_data(db:Session = Depends(get_db)):
             content={"message": "Data Fetch Falied!"}
         )
         
-    file_map = {f.id:{"file_name": f.file_name, "page_count": f.page_count} for f in files}
+    file_map = {f.id:{"file_name": f.file_name, "page_count": f.page_count, "engine": f.engine} for f in files}
+    print(file_map)
     
     singelpage_doc = defaultdict(lambda:defaultdict(list))
     multipage_doc = defaultdict(lambda:defaultdict(list))
@@ -89,7 +102,7 @@ def fetch_data(db:Session = Depends(get_db)):
         file_data = file_map.get(row.file_id)
         if not file_data:
             continue
-        
+        print(file_data)
         entry = {
             "line_text": row.line_text,
             "x": row.x,
@@ -101,12 +114,12 @@ def fetch_data(db:Session = Depends(get_db)):
         }
         
         file_name = file_data["file_name"]
-        page_count = file_data["page_count"]
-        
+        page_count = file_data["page_count"] 
+        engine = file_data["engine"]       
         target_dict = singelpage_doc if page_count==1 else multipage_doc
         
         target_dict[file_name][str(row.page_number)].append(entry)
-        
+        # target_dict[file_name]["engine"] = engine
     return JSONResponse({
         "single_page_doc": singelpage_doc,
         "multi_page_doc": multipage_doc

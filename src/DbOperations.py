@@ -1,15 +1,15 @@
-from src.DataBase import Files, OCR_Results
 from sqlalchemy.orm import Session
-from sqlalchemy.exc import SQLAlchemyError
 import datetime
-from fastapi import HTTPException, status
+from fastapi import HTTPException
+from .DataBaseSchema import Files, OCR_Results
  
     
-def InsertOcrResults(db: Session, page_count:int, file_name:str, ocr_result: list):
+def InsertOcrResults(db: Session, page_count:int, file_name:str,engine:str, ocr_result: list):
     try:        
         new_file = Files(
             file_name= file_name,
             page_count= page_count,
+            engine=engine,
             upload_time= datetime.datetime.now()
         )     
         db.add(new_file)

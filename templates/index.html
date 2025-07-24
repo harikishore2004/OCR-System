@@ -35,11 +35,9 @@
         </div>
     </nav>
 
-    <!-- Main Content -->
     <div class="container main-container" style="margin-top: 80px;">
         <div class="row justify-content-center">
             <div class="col-lg-10">
-                <!-- Upload Section -->
                 <div class="container mt-5">
                     <div class="card shadow-sm p-4">
                         <h4 class="text-center mb-3" style="font-weight: 600; color: var(--text-color);">
@@ -47,6 +45,12 @@
                         </h4>
 
                         <div id="uploadArea" class="d-flex flex-column align-items-center">
+
+                            <select class="form-select mb-3" id="ocrEngineSelect" style="max-width: 300px;">
+                                <option value="paddleocr" selected>PaddleOCR</option>
+                                <option value="tesseract">Tesseract</option>
+                            </select>
+
                             <input type="file" class="form-control mb-3" id="fileInput" accept=".pdf,.tiff"
                                 style="max-width: 300px;">
 
@@ -58,51 +62,127 @@
                 </div>
 
             </div>
+            <div class="container mt-5">
+                <div class="card shadow-sm p-4">
+                    <h4 class="text-center mb-4" style="font-weight: 600; color: var(--text-color);">
+                        About This OCR Web Application
+                    </h4>
+
+                    <p class="lead text-center">
+                        A lightweight, fast, and efficient OCR tool to extract structured text from PDF and TIFF
+                        documents
+                        using two advanced OCR engines.
+                    </p>
+
+                    <div class="row mt-4">
+                        <div class="col-md-6 mb-4">
+                            <h5 class="fw-bold">Engine 1: PaddleOCR (Lightweight Version)</h5>
+                            <p>
+                                This application uses the <strong>PP-OCRv5 Mobile</strong> variant of PaddleOCR — a
+                                compact
+                                and highly optimized OCR pipeline for CPUs.
+                                It leverages separate detection and recognition models to extract text along with its
+                                spatial coordinates.
+                                Ideal for scanned documents, printed text, and structured layouts.
+                            </p>
+                        </div>
+                        <div class="col-md-6 mb-4">
+                            <h5 class="fw-bold">Engine 2: Tesseract OCR</h5>
+                            <p>
+                                Tesseract is an open-source OCR engine developed by Google. It supports over 100
+                                languages
+                                and works well for plain-text extraction.
+                                In this application, it's used for general-purpose OCR tasks when layout-specific
+                                details
+                                like bounding boxes are not required.
+                            </p>
+                        </div>
+                    </div>
+
+                    <h5 class="fw-bold mt-4">When to Use Which OCR Engine?</h5>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-striped mt-3">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Criteria</th>
+                                    <th>PaddleOCR (Lightweight)</th>
+                                    <th>Tesseract OCR</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Performance</strong></td>
+                                    <td>Fast and optimized for mobile/CPU</td>
+                                    <td>Moderate speed on CPU</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Text Layout</strong></td>
+                                    <td>Supports bounding boxes and structured layout</td>
+                                    <td>Plain text extraction only</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Language Support</strong></td>
+                                    <td>Primarily English (lightweight model)</td>
+                                    <td>Supports 100+ languages</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Best Used For</strong></td>
+                                    <td>Invoices, forms, scanned documents</td>
+                                    <td>Simple PDFs, books, plain documents</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="text-muted mt-3">
+                        🛈 You can choose the OCR engine based on your use case — PaddleOCR is ideal for extracting text
+                        with structure, while Tesseract is better for quick, language-diverse tasks.
+                    </p>
+                </div>
+            </div>
+
         </div>
-    </div>
 
-    <!-- Single Page Modal -->
-    <div class="modal fade" id="multiPageModal" tabindex="-1">
-        <div class="modal-dialog modal-xxl">
-            <div class="modal-content">
-                <div class="modal-header sticky-top bg-white z-1 rounded-0">
-                    <h5 class="modal-title">
-                        <i class="fas fa-file-alt me-2"></i>Multi Page Document Results
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
+        <div class="modal fade" id="multiPageModal" tabindex="-1">
+            <div class="modal-dialog modal-xxl">
+                <div class="modal-content">
+                    <div class="modal-header sticky-top bg-white z-1 rounded-0">
+                        <h5 class="modal-title">
+                            <i class="fas fa-file-alt me-2"></i>Multi Page Document Results
+                        </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
 
-                <div class="modal-body rounded-0" id="tables-container2">
+                    <div class="modal-body rounded-0" id="tables-container2">
 
-                    <!-- <div id="" class="container" style="width: 100%; height: 100%;"></div></div> -->
-                </div>
+                        <!-- <div id="" class="container" style="width: 100%; height: 100%;"></div></div> -->
+                    </div>
 
-                <!-- Pagination -->
-                <div class="modal-footer sticky-bottom bg-white z-1">
-                    <nav>
-                        <ul class="pagination">
-                            <li class="page-item">
-                                <a class="page-link" href="#" onclick="changePage('single', -1)">
-                                    <i class="fas fa-chevron-left"></i>
-                                </a>
-                            </li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#" onclick="changePage('single', 1)">
-                                    <i class="fas fa-chevron-right"></i>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
+                    <!-- Pagination -->
+                    <div class="modal-footer sticky-bottom bg-white z-1">
+                        <nav>
+                            <ul class="pagination">
+                                <li class="page-item">
+                                    <a class="page-link" href="#" onclick="changePage('single', -1)">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#" onclick="changePage('single', 1)">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-    </div>
 
-    <!-- Single Page Modal -->
     <div class="modal fade" id="singlePageModal" tabindex="-1">
         <div class="modal-dialog modal-xxl">
             <div class="modal-content">
@@ -143,112 +223,6 @@
     </div>
     </div>
 
-
-    <!-- Multi-Page Modal -->
-    <div class="modal fade" id="multiPageModal" tabindex="-1">
-        <div class="modal-dialog modal-xl">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">
-                        <i class="fas fa-file-pdf me-2"></i>Multi-Page Document Results
-                    </h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Document Name</th>
-                                    <th>Page</th>
-                                    <th>Status</th>
-                                    <th>Confidence</th>
-                                    <th>Extracted Text</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="multiPageTableBody">
-                                <tr>
-                                    <td>manual_guide.pdf</td>
-                                    <td>1</td>
-                                    <td><span class="status-badge status-completed">Completed</span></td>
-                                    <td>94%</td>
-                                    <td>Chapter 1: Introduction to the System...</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-primary">
-                                            <i class="fas fa-eye"></i> View
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-success">
-                                            <i class="fas fa-download"></i> Export
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>manual_guide.pdf</td>
-                                    <td>2</td>
-                                    <td><span class="status-badge status-completed">Completed</span></td>
-                                    <td>97%</td>
-                                    <td>Chapter 2: System Requirements and Setup...</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-primary">
-                                            <i class="fas fa-eye"></i> View
-                                        </button>
-                                        <button class="btn btn-sm btn-outline-success">
-                                            <i class="fas fa-download"></i> Export
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>report_2024.pdf</td>
-                                    <td>1</td>
-                                    <td><span class="status-badge status-processing">Processing</span></td>
-                                    <td>--</td>
-                                    <td>Processing...</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-secondary" disabled>
-                                            <i class="fas fa-spinner fa-spin"></i> Wait
-                                        </button>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>brochure.pdf</td>
-                                    <td>1</td>
-                                    <td><span class="status-badge status-error">Error</span></td>
-                                    <td>--</td>
-                                    <td>Failed to process - Low image quality</td>
-                                    <td>
-                                        <button class="btn btn-sm btn-outline-danger">
-                                            <i class="fas fa-redo"></i> Retry
-                                        </button>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Pagination -->
-                    <nav>
-                        <ul class="pagination">
-                            <li class="page-item">
-                                <a class="page-link" href="#" onclick="changePage('multi', -1)">
-                                    <i class="fas fa-chevron-left"></i>
-                                </a>
-                            </li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item"><a class="page-link" href="#">4</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#" onclick="changePage('multi', 1)">
-                                    <i class="fas fa-chevron-right"></i>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div>
-            </div>
-        </div>
-    </div>
     <div id="flash-container" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1055; max-width: 350px;">
     </div>
 
