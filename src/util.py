@@ -7,6 +7,12 @@ from fastapi import UploadFile
 def EnsureFolder(path:str):
     if not os.path.exists(path):
         Path(path).mkdir(parents=True, exist_ok=True)
+    else:
+        raise HTTPException(
+            status_code = 500,
+            detail="File already exists, Rename your file"
+            )
+        
         
 def SaveFile(file: UploadFile, filename:str):
     
@@ -37,7 +43,7 @@ def SaveFile(file: UploadFile, filename:str):
     except Exception as e:
         raise HTTPException(
             status_code = 500,
-            detail=f"Failed to save file"
+            detail=e.detail
             )
     
 

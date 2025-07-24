@@ -191,6 +191,12 @@ body {
   color: #dc2626;
 }
 
+.modal-xxl {
+  max-width: 80vw;
+  width: 80vw;
+}
+
+
 @media (max-width: 768px) {
   .upload-section {
     padding: 2rem 1rem;

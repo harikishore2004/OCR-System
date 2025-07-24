@@ -1,17 +1,11 @@
 import pytesseract
 from PIL import Image
+from paddleocr import PaddleOCR
+import paddle
 from collections import defaultdict
 from fastapi import HTTPException
 
-# def DrawBox(image: Image.Image, boxes: list, save_path: str):
-#     draw = ImageDraw.Draw(image)
-#     for box in boxes:
-#         x, y, w, h = box['x'], box['y'], box['width'], box['height']
-#         draw.rectangle([x, y, x+w, y+h], fill='green', width=1)
-        
-#     image.save(save_path)
-    
-def Extractor(image_paths:list) -> list[dict]:
+def TeserractExtractor(image_paths:list) -> list[list[dict]]:
     try:
         output = []
         for path in image_paths:  
@@ -62,13 +56,64 @@ def Extractor(image_paths:list) -> list[dict]:
             
                 # DrawBox(image=image, boxes=line_result, save_path=path)
             output.append(line_result)
+            
         return output
-    
     except Exception as e:
         raise HTTPException(
             status_code = 500, 
-            detail=f"Text extraction failed"
+            detail=f"Text extraction using Terserract failed"
             )
                 
         
+def PaddleExtractor(image_paths:list) -> list[list[dict]]:  
+    try:   
+        paddle.set_flags({
+        "FLAGS_fraction_of_cpu_memory_to_use": 0.5,  
+        "FLAGS_use_pinned_memory": False
+        })
+        ocr = PaddleOCR(
+            use_doc_orientation_classify=False, 
+            use_doc_unwarping=False,
+            use_textline_orientation=False,
+            text_detection_model_dir="PaddleOcrModal/PP-OCRv5_mobile_det_infer",
+            text_recognition_model_dir="PaddleOcrModal/PP-OCRv5_mobile_rec_infer",
+            text_detection_model_name="PP-OCRv5_mobile_det",
+            text_recognition_model_name="PP-OCRv5_mobile_rec",
+            lang="en",
+            cpu_threads=2
+            )
+        output = []
         
+        for path in image_paths:
+            line_result = []
+            result = ocr.predict(path)
+            for res in result:
+                # res.print()
+                res.save_to_img("output/optimized")
+                res.save_to_json("output/optimized")
+                
+                for text, score, box in zip(res["rec_texts"], res["rec_scores"], res["rec_boxes"]):
+                    x = int(box[0])
+                    y = int(box[1])
+                    width = int(box[2] - box[0])
+                    height = int(box[3] - box[1])
+                    #print(f"Text is: {text}, Score is: {score}, Box: {x}, {y}, {width}, {height}")
+                    line_result.append({
+                        'text': text,
+                        'x': x,
+                        'y': y,
+                        'width': width,
+                        'height': height
+                    })
+            output.append(line_result)
+        return output
+ 
+    except Exception as e:
+        raise HTTPException(
+            status_code = 500, 
+            detail=f"Text extraction using Paddle OCR failed"
+            )
+    
+
+    
+   

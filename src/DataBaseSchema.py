@@ -15,6 +15,7 @@ class Files(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     file_name = Column(String, nullable=False)
     page_count = Column(Integer, nullable=False)
+    engine = Column(String, nullable=False)
     upload_time = Column(TIMESTAMP,nullable=False )
     
 class OCR_Results(Base):
