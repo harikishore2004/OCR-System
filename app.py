@@ -60,13 +60,6 @@ async def upload_file(file: UploadFile = File(...), db:Session = Depends(get_db)
             
         #Databased insertion
         InsertOcrResults(db=db, page_count=len(image_path), file_name=file.filename,engine=engine, ocr_result=ocr_result)
-        
-        print("File Path -> ", file_path)
-        print("Images Path -> ",image_path)
-        #print(ocr_result)
-        print(f"{engine} Result _________________________________")
-        print(ocr_result)
-        
         return JSONResponse(
             status_code = 200,
             content={"message": "File Uploaded", "category": "success"}
@@ -92,7 +85,7 @@ def fetch_data(db:Session = Depends(get_db)):
         )
         
     file_map = {f.id:{"file_name": f.file_name, "page_count": f.page_count, "engine": f.engine} for f in files}
-    print(file_map)
+    #print(file_map)
     
     singelpage_doc = defaultdict(lambda:defaultdict(list))
     multipage_doc = defaultdict(lambda:defaultdict(list))
@@ -102,7 +95,7 @@ def fetch_data(db:Session = Depends(get_db)):
         file_data = file_map.get(row.file_id)
         if not file_data:
             continue
-        print(file_data)
+        #print(file_data)
         entry = {
             "line_text": row.line_text,
             "x": row.x,

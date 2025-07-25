@@ -20,7 +20,6 @@ def InsertOcrResults(db: Session, page_count:int, file_name:str,engine:str, ocr_
         for i, line in enumerate(ocr_result):
             for content in line:
                 new_record = OCR_Results(  
-                    file_name=file_name,
                     file_id=file_id,
                     page_number=i+1,
                     line_text=content['text'],
