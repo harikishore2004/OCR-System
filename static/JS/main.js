@@ -56,7 +56,7 @@ submitbutton.addEventListener('click', async (e) => {
         if (!response.ok) {
             console.error("Server returned error:", result.message);
             showToast(result.message, result.category);
-            // setTimeout(() => window.location.reload(), 5000);
+            setTimeout(() => window.location.reload(), 5000);
             return;
         }
         showToast(result.message, result.category);

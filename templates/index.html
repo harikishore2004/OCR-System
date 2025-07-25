@@ -48,7 +48,7 @@
 
                             <select class="form-select mb-3" id="ocrEngineSelect" style="max-width: 300px;">
                                 <option value="tesseract" selected>Tesseract</option>
-                                <option value="paddleocr" >PaddleOCR</option>
+                                <option value="paddleocr">PaddleOCR</option>
 
                             </select>
 
@@ -64,83 +64,107 @@
 
             </div>
             <div class="container mt-5">
-                <div class="card shadow-sm p-4">
-                    <h4 class="text-center mb-4" style="font-weight: 600; color: var(--text-color);">
-                        About This OCR Web Application
-                    </h4>
-
-                    <p class="lead text-center">
-                        A lightweight, fast, and efficient OCR tool to extract structured text from PDF and TIFF
-                        documents
-                        using two advanced OCR engines.
-                    </p>
-
-                    <div class="row mt-4">
-                        <div class="col-md-6 mb-4">
-                            <h5 class="fw-bold">Engine 1: PaddleOCR (Lightweight Version)</h5>
-                            <p>
-                                This application uses the <strong>PP-OCRv5 Mobile</strong> variant of PaddleOCR — a
-                                compact
-                                and highly optimized OCR pipeline for CPUs.
-                                It leverages separate detection and recognition models to extract text along with its
-                                spatial coordinates.
-                                Ideal for scanned documents, printed text, and structured layouts.
-                            </p>
-                        </div>
-                        <div class="col-md-6 mb-4">
-                            <h5 class="fw-bold">Engine 2: Tesseract OCR</h5>
-                            <p>
-                                Tesseract is an open-source OCR engine developed by Google. It supports over 100
-                                languages
-                                and works well for plain-text extraction.
-                                In this application, it's used for general-purpose OCR tasks when layout-specific
-                                details
-                                like bounding boxes are not required.
-                            </p>
-                        </div>
+                <div class="card shadow-lg border-0" style="border-radius: 15px;">
+                    <div class="card-header bg-gradient text-white text-center py-4"
+                        style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 15px 15px 0 0;">
+                        <h3 class="mb-0 fw-bold text-dark">
+                            About This OCR Web Application
+                        </h3>
                     </div>
 
-                    <h5 class="fw-bold mt-4">When to Use Which OCR Engine?</h5>
-                    <div class="table-responsive">
-                        <table class="table table-bordered table-striped mt-3">
-                            <thead class="table-light">
-                                <tr>
-                                    <th>Criteria</th>
-                                    <th>PaddleOCR (Lightweight)</th>
-                                    <th>Tesseract OCR</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td><strong>Performance</strong></td>
-                                    <td>Fast and optimized for mobile/CPU</td>
-                                    <td>Moderate speed on CPU</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Text Layout</strong></td>
-                                    <td>Supports bounding boxes and structured layout</td>
-                                    <td>Plain text extraction only</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Language Support</strong></td>
-                                    <td>Primarily English (lightweight model)</td>
-                                    <td>Supports 100+ languages</td>
-                                </tr>
-                                <tr>
-                                    <td><strong>Best Used For</strong></td>
-                                    <td>Invoices, forms, scanned documents</td>
-                                    <td>Simple PDFs, books, plain documents</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                    <div class="card-body p-5">
+                        <div class="text-center mb-5">
+                            <p class="lead fs-4 fs-bold mb-4">
+                                A lightweight and efficient OCR tool to extract structured text from PDF and TIFF
+                                documents using two advanced OCR engines.
+                            </p>
+                        </div>
 
-                    <p class="text-muted mt-3 bg-info ">
-                        You can choose the OCR engine based on your use case — PaddleOCR is ideal for extracting text
-                        with structure, while Tesseract is better for quick, language-diverse tasks.
-                    </p>
+                        <div class="row mt-5">
+                            <div class="col-lg-6 mb-4">
+                                <div class="card h-100 border-0 shadow-sm"
+                                    style="border-left: 4px solid #28a745 !important;">
+                                    <div class="card-body p-4">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="bg-success bg-opacity-10 rounded-circle p-2 me-3">
+                                                <i class="fas fa-robot text-success fs-4"></i>
+                                            </div>
+                                            <h5 class="fw-bold mb-0 text-success">Engine 1: PaddleOCR</h5>
+                                        </div>
+                                        <span class="badge bg-success bg-opacity-25 text-success mb-3">Lightweight
+                                            Version</span>
+                                        <p class="text-muted">
+                                            This application uses the <strong>PP-OCRv5 Mobile</strong> variant of
+                                            PaddleOCR — a compact and highly optimized OCR pipeline for CPUs. It
+                                            leverages separate detection and recognition models to extract text along
+                                            with its spatial coordinates.
+                                        </p>
+                                        <div class="mt-3">
+                                            <small class="text-success fw-semibold">
+                                                <i class="fas fa-check-circle me-1"></i> Ideal for scanned documents,
+                                                printed text, and structured layouts
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 mb-4">
+                                <div class="card h-100 border-0 shadow-sm"
+                                    style="border-left: 4px solid #007bff !important;">
+                                    <div class="card-body p-4">
+                                        <div class="d-flex align-items-center mb-3">
+                                            <div class="bg-primary bg-opacity-10 rounded-circle p-2 me-3">
+                                                <i class="fas fa-cogs text-primary fs-4"></i>
+                                            </div>
+                                            <h5 class="fw-bold mb-0 text-primary">Engine 2: Tesseract OCR</h5>
+                                        </div>
+                                        <span class="badge bg-primary bg-opacity-25 text-primary mb-3">Google
+                                            Developed</span>
+                                        <p class="text-muted">
+                                            Tesseract is an open-source OCR engine developed by Google. It supports over
+                                            multiple languages and works well for plain-text extraction. In this
+                                            application,
+                                            it's used for general-purpose OCR tasks.
+                                        </p>
+                                        <div class="mt-3">
+                                            <small class="text-primary fw-semibold">
+                                                <i class="fas fa-check-circle me-1"></i> Perfect when layout-specific
+                                                details like bounding boxes are not required
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alert alert-info border-0 mt-4"
+                            style="background: linear-gradient(135deg, #d1ecf1 0%, #b8daff 100%); border-radius: 10px;">
+                            <div class="d-flex align-items-center">
+                                <i class="fas fa-lightbulb fs-4 text-warning me-3"></i>
+                                <div>
+                                    <p class="mb-0 text-dark">
+                                        Choose <strong>PaddleOCR</strong> for structured document analysis with precise
+                                        handwritten text detection,
+                                        or <strong>Tesseract</strong> for quick text extraction.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="alert alert-info border-0 mt-4"
+                            style="background: linear-gradient(135deg, #f55858 0%, #ec4e4e 100%); border-radius: 10px;">
+                            <div class="d-flex align-items-center">
+                                
+                                <div>
+                                    <p class="mb-0 text-white fw-bold">
+                                        Document size should be less then 10 MB
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
+
 
         </div>
 
