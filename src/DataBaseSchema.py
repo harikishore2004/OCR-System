@@ -21,7 +21,6 @@ class Files(Base):
 class OCR_Results(Base):
     __tablename__ = "ocr_results"
     id = Column(Integer, primary_key=True, autoincrement=True)
-    file_name = Column(String, nullable=False)
     file_id = Column(Integer, ForeignKey("files.id", ondelete="CASCADE"))
     page_number = Column(Integer, nullable=False)
     line_text = Column(String)

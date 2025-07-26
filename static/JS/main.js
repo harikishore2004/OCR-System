@@ -1,7 +1,102 @@
 
 const submitbutton = document.getElementById('FileSubmitButton');
 let ocr_data = null;
+let docnames = null;
+let currnet_page = 0;
+let total_pages = 0;
 
+function nextPage() {
+    if (currnet_page < total_pages) {
+        currnet_page++;
+        renderPage(currnet_page);
+    }
+}
+
+function prevPage() {
+    if (currnet_page > 0) {
+        currnet_page--;
+        renderPage(currnet_page);
+    }
+}
+
+function initPages() {
+    docnames = Object.keys(ocr_data["multi_page_doc"]);
+    total_pages = (docnames.length) - 1;
+    renderPage(currnet_page);
+}
+
+function renderPage(docno) {
+    // console.log(docnames[docno]);
+    const tablecontainer = document.getElementById("tables-container2")
+    if (total_pages === 0) {
+        let heading = document.createElement("h3");
+        heading.innerText = "No Document Uploaded!"
+        heading.classList.add("mt-4", "text-primary", "fw-bold");
+        tablecontainer.classList.add("text-center");
+        tablecontainer.appendChild(heading);
+    }
+
+    else {
+        tablecontainer.innerHTML = "";
+        const heading = document.createElement("h5");
+        heading.innerText = docnames[docno];
+        heading.classList.add("mt-4", "text-primary", "fw-bold");
+        tablecontainer.appendChild(heading);
+
+        // Adding the Table 
+        const table_div = document.createElement("div");
+        table_div.classList.add("table-responsive")
+        tablecontainer.appendChild(table_div);
+        const table = document.createElement("table");
+        table.classList.add("table", "table-bordered", "table-striped", "align-middle")
+
+        const thead = document.createElement("thead");
+        table.classList.add("table-light")
+        thead.innerHTML = `
+            <tr>
+                <th>Line no.</th>
+                <th>Line Text</th>
+                <th>X</th>
+                <th>Y</th>
+                <th>Width</th>
+                <th>Height</th>
+                <th>Page no.</th>
+                <th>Timestamp</th>
+            </tr>
+        `;
+        table.appendChild(thead);
+        const tbody = document.createElement("tbody");
+
+        const docContent = ocr_data["multi_page_doc"][docnames[docno]];
+        // console.log("DocC", docContent);
+        for (let page in docContent) {
+            // console.log("Page no ---------------------",page);
+            lines = docContent[page];
+            lines.forEach((line, index) => {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `
+                <td>${index + 1}</td>
+                <td>${line.line_text}</td>
+                <td>${line.x}</td>
+                <td>${line.y}</td>
+                <td>${line.width}</td>
+                <td>${line.height}</td>
+                <td>${page}</td>
+                <td>${line.timestamp}</td>
+            `;
+                tbody.appendChild(tr);
+                // console.log(`Line Text ${line.line_text}, x = ${line.x}, ${line.y}, ${line.width}, ${line.height}`)
+            });
+
+
+        }
+        table.appendChild(tbody);
+        table_div.appendChild(table)
+        document.getElementById("prev-btn").disabled = docno === 0;
+        document.getElementById("next-btn").disabled = docno === total_pages;
+    }
+
+}
 
 async function FetchData() {
     try {
@@ -14,6 +109,7 @@ async function FetchData() {
         ocr_data = data;
         PopulateSinglePageDocs();
         PopulateMultiPageDocs();
+        initPages();
     }
     catch (error) {
         console.error("Failed to fetch OCR data:", error);
@@ -43,72 +139,69 @@ submitbutton.addEventListener('click', async (e) => {
     const formdata = new FormData();
     formdata.append("file", file);
     formdata.append("engine", engine);
+    const loadingToastId = showProcessingToast();
     try {
         const response = await fetch("http://127.0.0.1:8000/upload", {
             method: "POST",
             body: formdata,
         });
 
+        const result = await response.json();
+        removeToast(loadingToastId);
+
         if (!response.ok) {
-            const error = await response.json();
-            console.error("Server returned error:", error.detail);
-            showToast(error.message, error.category)
+            console.error("Server returned error:", result.message);
+            showToast(result.message, result.category);
+            setTimeout(() => window.location.reload(), 2000);
             return;
         }
-        const result = await response.json();
-        showToast(result.message, result.category)
-        console.log("uploaded")
-        document.getElementById("fileInput").value = "";
+        showToast(result.message, result.category);
+        setTimeout(() => {
+            window.location.reload();
+        }, 2000);
     }
     catch (error) {
-        console.error("Upload Failed", error)
+        removeToast(loadingToastId);
+
+        console.error("Upload Failed", error);
     }
 
 
 });
 
 
-function changePage(type, direction) {
-    const currentPage = document.querySelector(`#${type}PageModal .page-item.active .page-link`);
-    const currentPageNum = parseInt(currentPage.textContent);
-    const allPages = document.querySelectorAll(`#${type}PageModal .page-item:not(:first-child):not(:last-child)`);
+function showProcessingToast() {
+    const toastId = `toast-${Date.now()}`;
+    const toastHTML = `
+        <div id="${toastId}" class="toast align-items-center border border-warning border-5 bg-white mb-2" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body fw-bold fs-5 d-flex align-items-center gap-2">
+                    <span class="spinner-border text-warning ms-3" role="status" aria-hidden="true" style="width: 1.5rem; height: 1.5rem;"></span>
+                    Processing...
+                </div>
+            </div>
+        </div>
+    `;
+    const toastContainer = document.getElementById("flash-container"); // Ensure this exists in HTML
+    toastContainer.insertAdjacentHTML("beforeend", toastHTML);
 
-    let newPageNum;
-    if (direction === 1) {
-        newPageNum = Math.min(currentPageNum + 1, allPages.length);
-    } else {
-        newPageNum = Math.max(currentPageNum - 1, 1);
-    }
+    const toastElement = new bootstrap.Toast(document.getElementById(toastId), { autohide: false });
+    toastElement.show();
 
-    allPages.forEach((page, index) => {
-        if (index + 1 === newPageNum) {
-            page.classList.add('active');
-        } else {
-            page.classList.remove('active');
-        }
-    });
-
-    console.log(`${type} page navigation: Page ${newPageNum}`);
+    return toastId;
 }
 
-document.querySelectorAll('.pagination .page-link').forEach(link => {
-    if (!link.innerHTML.includes('chevron')) {
-        link.addEventListener('click', function (e) {
-            e.preventDefault();
-            const pageNum = this.textContent;
-            const modal = this.closest('.modal');
-            const allPages = modal.querySelectorAll('.page-item:not(:first-child):not(:last-child)');
+function removeToast(toastId) {
+    const toastEl = document.getElementById(toastId);
+    if (toastEl) {
+        const toastInstance = bootstrap.Toast.getInstance(toastEl);
+        toastInstance && toastInstance.hide();
+        setTimeout(() => {
+            toastEl.remove();
+        }, 500);
 
-            allPages.forEach((page, index) => {
-                if (index + 1 === parseInt(pageNum)) {
-                    page.classList.add('active');
-                } else {
-                    page.classList.remove('active');
-                }
-            });
-        });
     }
-});
+}
 
 
 function showToast(message, category = "info") {
@@ -120,13 +213,15 @@ function showToast(message, category = "info") {
     else if (category === "warning") borderClass = "border-warning text-warning";
 
     const toastHTML = `
-    <div class="toast align-items-center border ${borderClass} border-5 bg-white mb-2" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-            <div class="toast-body fw-bold fs-5">${message}</div>
-            <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        <div class="toast align-items-center border ${borderClass} border-5 bg-white mb-2" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body fw-bold fs-5">${message}</div>
+                <button type="button" class="btn-close me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
         </div>
-    </div>
-`;
+    `;
+
+
 
 
     const tempDiv = document.createElement("div");
@@ -134,7 +229,7 @@ function showToast(message, category = "info") {
     const toastElement = tempDiv.firstChild;
     flashContainer.appendChild(toastElement);
 
-    const toast = new bootstrap.Toast(toastElement, { delay: 5000 });
+    const toast = new bootstrap.Toast(toastElement, { delay: 2000 });
     toast.show();
     toastElement.addEventListener("hidden.bs.toast", () => {
         toastElement.remove();
@@ -214,6 +309,7 @@ function PopulateSinglePageDocs() {
 function PopulateMultiPageDocs() {
     const tablecontainer = document.getElementById("tables-container2")
     const docs = ocr_data["multi_page_doc"];
+    // console.log("docs = ", docs)
     if (Object.keys(docs).length === 0) {
         let heading = document.createElement("h3");
         heading.innerText = "No Document Uploaded!"
@@ -260,15 +356,15 @@ function PopulateMultiPageDocs() {
                 lines.forEach((line, index) => {
                     const tr = document.createElement("tr");
                     tr.innerHTML = `
-                <td>${index + 1}</td>
-                <td>${line.line_text}</td>
-                <td>${line.x}</td>
-                <td>${line.y}</td>
-                <td>${line.width}</td>
-                <td>${line.height}</td>
-                <td>${page}</td>
-                <td>${line.timestamp}</td>
-            `;
+                    <td>${index + 1}</td>
+                    <td>${line.line_text}</td>
+                    <td>${line.x}</td>
+                    <td>${line.y}</td>
+                    <td>${line.width}</td>
+                    <td>${line.height}</td>
+                    <td>${page}</td>
+                    <td>${line.timestamp}</td>
+                `;
                     tbody.appendChild(tr);
                 });
             }
@@ -277,3 +373,5 @@ function PopulateMultiPageDocs() {
         }
     }
 }
+
+
