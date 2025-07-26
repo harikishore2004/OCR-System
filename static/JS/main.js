@@ -132,7 +132,7 @@ submitbutton.addEventListener('click', async (e) => {
         return;
     }
 
-    if (file.size > 10 * 1024 * 1024 ) {
+    if (file.size > 10 * 1024 * 1024) {
         data = { "message": "File size is greater then 10MB", "category": "danger" };
         showToast(data.message, data.category);
         return;
@@ -252,11 +252,27 @@ function PopulateSinglePageDocs() {
     }
 
     else {
+        let img_path = null;
         for (let docname in docs) {
+            let ext = docname.split(".");
+            if (ext[1] === "pdf") {
+                img_path = `/uploads/pdf/${ext[0]}/1_page.png`;
+            }
+            else {
+                img_path = `/uploads/tiff/${ext[0]}/1_page.png`;
+            }
+            console.log();
             const heading = document.createElement("h5");
-            heading.innerText = `${docname} | Engine: ${docname.engine}`;
+            const button = document.createElement("a");
+            heading.innerText = `${docname}`;
+            button.innerText = "View Image";
+            button.setAttribute('target', '_blank');
             heading.classList.add("mt-4", "text-primary", "fw-bold");
+            button.classList.add("btn", "btn-primary", "me-2", "p-3");
+            button.href = img_path;
+
             tablecontainer.appendChild(heading);
+            tablecontainer.appendChild(button);
 
             const table_div = document.createElement("div");
             table_div.classList.add("table-responsive")

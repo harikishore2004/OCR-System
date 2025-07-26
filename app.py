@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request, File, UploadFile, HTTPException, Depends, 
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
+from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 from src.Util import SaveFile
 from src.ImageConverter import Converter
@@ -14,6 +15,15 @@ from collections import defaultdict
 app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
+app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"], 
+    allow_credentials=True,
+    allow_methods=["GET", "POST"],
+    allow_headers=["*"],
+)
 templates = Jinja2Templates(directory="templates")
 
 def get_db():
