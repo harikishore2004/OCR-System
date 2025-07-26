@@ -27,7 +27,7 @@
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#multiPageModal">
-                            <i class="fas fa-file-pdf"></i> Multi-Page Results
+                            <i class="fas fa-file-pdf"></i> Multi Page Results
                         </a>
                     </li>
                 </ul>
@@ -153,7 +153,7 @@
                         <div class="alert alert-info border-0 mt-4"
                             style="background: linear-gradient(135deg, #f55858 0%, #ec4e4e 100%); border-radius: 10px;">
                             <div class="d-flex align-items-center">
-                                
+
                                 <div>
                                     <p class="mb-0 text-white fw-bold">
                                         Document size should be less then 10 MB
@@ -180,7 +180,14 @@
 
                     <div class="modal-body rounded-0" id="tables-container2">
 
-                        <!-- <div id="" class="container" style="width: 100%; height: 100%;"></div></div> -->
+                    </div>
+                    <div class="modal-footer sticky-bottom bg-white z-1">
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button onclick="prevPage()" id="prev-btn" class="btn btn-primary me-md-2"
+                                type="button">Previous</button>
+                            <button onclick="nextPage()" id="next-btn" class="btn btn-primary"
+                                type="button">Next</button>
+                        </div>
                     </div>
 
 
@@ -201,29 +208,10 @@
 
                 <div class="modal-body rounded-0" id="tables-container1">
 
-                    <!-- <div id="" class="container" style="width: 100%; height: 100%;"></div></div> -->
                 </div>
 
-                <!-- Pagination -->
-                <!-- <div class="modal-footer sticky-bottom bg-white z-1">
-                    <nav>
-                        <ul class="pagination">
-                            <li class="page-item">
-                                <a class="page-link" href="#" onclick="changePage('single', -1)">
-                                    <i class="fas fa-chevron-left"></i>
-                                </a>
-                            </li>
-                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                            <li class="page-item">
-                                <a class="page-link" href="#" onclick="changePage('single', 1)">
-                                    <i class="fas fa-chevron-right"></i>
-                                </a>
-                            </li>
-                        </ul>
-                    </nav>
-                </div> -->
+                <div class="modal-footer sticky-bottom bg-white z-1">
+                </div>
             </div>
         </div>
     </div>
