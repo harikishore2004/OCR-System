@@ -3,7 +3,7 @@ from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
-from src.util import SaveFile
+from src.Util import SaveFile
 from src.ImageConverter import Converter
 from src.TextExtractor import TeserractExtractor, PaddleExtractor
 from src.DataBaseSchema import Files, OCR_Results, SessionLocal, CreateTables
@@ -41,7 +41,7 @@ async def upload_file(file: UploadFile = File(...), db:Session = Depends(get_db)
            
         allowed_types = ["application/pdf", "image/tiff"]  
         if file.content_type not in allowed_types:
-            raise HTTPException(status_code = 400, detail=f"{file.content_type} is not supported")
+            raise HTTPException(status_code = 400, detail=f"File format is not supported")
         if engine not in ["paddleocr", "tesseract"]:
             raise HTTPException(status_code=400, detail=f"{engine} is not supported")
         
@@ -62,7 +62,7 @@ async def upload_file(file: UploadFile = File(...), db:Session = Depends(get_db)
         InsertOcrResults(db=db, page_count=len(image_path), file_name=file.filename,engine=engine, ocr_result=ocr_result)
         return JSONResponse(
             status_code = 200,
-            content={"message": "File Uploaded", "category": "success"}
+            content={"message": "File Processed!", "category": "success"}
         )
         
     except HTTPException as e:

@@ -8,12 +8,10 @@ WORKDIR /app
 
 COPY . /app/
 
-RUN python -m pip install paddlepaddle==3.0.0 -i https://www.paddlepaddle.org.cn/packages/stable/cpu/
-RUN python -m pip install paddleocr
 RUN pip install --no-cache-dir -r requirements.txt
 
-RUN chmod +x modalsetup.sh
-RUN ./modalsetup.sh
+RUN chmod +x modalsetup.sh \ 
+    ./modalsetup.sh
 
 EXPOSE 8000
 

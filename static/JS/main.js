@@ -28,12 +28,15 @@ function initPages() {
 function renderPage(docno) {
     // console.log(docnames[docno]);
     const tablecontainer = document.getElementById("tables-container2")
-    if (total_pages === 0) {
+    console.log(total_pages)
+    if (total_pages === -1) {
         let heading = document.createElement("h3");
         heading.innerText = "No Document Uploaded!"
         heading.classList.add("mt-4", "text-primary", "fw-bold");
         tablecontainer.classList.add("text-center");
         tablecontainer.appendChild(heading);
+        document.getElementById("prev-btn").disabled = true;
+        document.getElementById("next-btn").disabled = true;
     }
 
     else {
@@ -95,7 +98,6 @@ function renderPage(docno) {
         document.getElementById("prev-btn").disabled = docno === 0;
         document.getElementById("next-btn").disabled = docno === total_pages;
     }
-
 }
 
 async function FetchData() {
@@ -108,7 +110,6 @@ async function FetchData() {
         const data = await response.json();
         ocr_data = data;
         PopulateSinglePageDocs();
-        PopulateMultiPageDocs();
         initPages();
     }
     catch (error) {
@@ -126,14 +127,15 @@ submitbutton.addEventListener('click', async (e) => {
 
     if (!allowed_files.includes(file.type)) {
         data = { "message": "Invalid File Format", "category": "danger" };
-        showToast(data);
+        showToast(data.message, data.category);
         e.target.value = '';
         return;
     }
 
-    if (file.size > 10 * 1024 * 1024) {
+    if (file.size > 10 * 1024 * 1024 ) {
         data = { "message": "File size is greater then 10MB", "category": "danger" };
-        showToast(data);
+        showToast(data.message, data.category);
+        return;
     }
 
     const formdata = new FormData();
