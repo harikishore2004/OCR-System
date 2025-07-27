@@ -132,7 +132,7 @@ submitbutton.addEventListener('click', async (e) => {
         return;
     }
 
-    if (file.size > 10 * 1024 * 1024 ) {
+    if (file.size > 10 * 1024 * 1024) {
         data = { "message": "File size is greater then 10MB", "category": "danger" };
         showToast(data.message, data.category);
         return;
@@ -253,11 +253,12 @@ function PopulateSinglePageDocs() {
 
     else {
         for (let docname in docs) {
-            const heading = document.createElement("h5");
-            heading.innerText = `${docname} | Engine: ${docname.engine}`;
-            heading.classList.add("mt-4", "text-primary", "fw-bold");
-            tablecontainer.appendChild(heading);
+            const heading = document.createElement("span");
+            heading.innerText = `${docname}`;
+            heading.classList.add("mt-4", "text-primary", "fw-bold", "fs-3");
+           
 
+            tablecontainer.appendChild(heading);
             const table_div = document.createElement("div");
             table_div.classList.add("table-responsive")
             tablecontainer.appendChild(table_div);

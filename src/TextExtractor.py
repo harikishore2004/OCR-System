@@ -89,10 +89,13 @@ def PaddleExtractor(image_paths:list) -> list[list[dict]]:
             result = ocr.predict(path)
             for res in result:
                 # res.print()
-                # res.save_to_img("output/optimized")
+                #res.save_to_img(path)
                 # res.save_to_json("output/optimized")
                 
                 for text, score, box in zip(res["rec_texts"], res["rec_scores"], res["rec_boxes"]):
+                    
+                    if not text.strip():
+                        continue
                     x = int(box[0])
                     y = int(box[1])
                     width = int(box[2] - box[0])

@@ -40,39 +40,10 @@ body {
   padding: 2rem 0;
 }
 
-.upload-section {
-  background: rgba(255, 255, 255, 0.95);
-  border-radius: 20px;
-  padding: 3rem;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-}
 
-.upload-area {
-  border: 3px dashed var(--border-color);
-  border-radius: 15px;
-  padding: 3rem;
-  text-align: center;
-  transition: all 0.3s ease;
-  background: var(--secondary-color);
-}
 
-.upload-area:hover {
-  border-color: var(--primary-color);
-  background: rgba(79, 70, 229, 0.05);
-}
 
-.upload-area.dragover {
-  border-color: var(--success-color);
-  background: rgba(16, 185, 129, 0.05);
-}
 
-.upload-icon {
-  font-size: 4rem;
-  color: var(--primary-color);
-  margin-bottom: 1rem;
-}
 
 .btn-primary {
   background: var(--primary-color);
@@ -164,32 +135,6 @@ body {
   background: var(--success-color);
 }
 
-.alert {
-  border-radius: 10px;
-  border: none;
-}
-
-.status-badge {
-  padding: 0.5rem 1rem;
-  border-radius: 20px;
-  font-size: 0.875rem;
-  font-weight: 500;
-}
-
-.status-processing {
-  background: rgba(59, 130, 246, 0.1);
-  color: #1d4ed8;
-}
-
-.status-completed {
-  background: rgba(16, 185, 129, 0.1);
-  color: #047857;
-}
-
-.status-error {
-  background: rgba(239, 68, 68, 0.1);
-  color: #dc2626;
-}
 
 .modal-xxl {
   max-width: 80vw;
