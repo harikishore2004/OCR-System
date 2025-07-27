@@ -91,7 +91,7 @@ def fetch_data(db:Session = Depends(get_db)):
         print(e)
         return JSONResponse(
             status_code=500,
-            content={"message": "Data Fetch Falied!"}
+            content={"message": "Data Fetch Falied!", "category": "error"}
         )
         
     file_map = {f.id:{"file_name": f.file_name, "page_count": f.page_count, "engine": f.engine} for f in files}
@@ -112,7 +112,7 @@ def fetch_data(db:Session = Depends(get_db)):
             "y": row.y,
             "width": row.width,
             "height": row.height,
-            "timestamp": row.timestamp.isoformat() if row.timestamp else None
+            "timestamp": row.timestamp.strftime("%d %b %Y, %I:%M %p") if row.timestamp else None
             
         }
         
