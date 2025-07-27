@@ -304,10 +304,7 @@ function PopulateSinglePageDocs() {
             table_div.appendChild(table)
         }
     }
-
-
 }
-
 
 function PopulateMultiPageDocs() {
     const tablecontainer = document.getElementById("tables-container2")
