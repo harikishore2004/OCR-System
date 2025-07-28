@@ -9,10 +9,13 @@ from src.ImageConverter import Converter
 from src.TextExtractor import TeserractExtractor, PaddleExtractor
 from src.DataBaseSchema import Files, OCR_Results, SessionLocal, CreateTables
 from src.DbOperations import InsertOcrResults
+from src.PaddleEngine import InitiatePaddleEngine
 from collections import defaultdict
-
+import paddle
+from paddleocr import PaddleOCR
 
 app = FastAPI()
+ocr_engine = None
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
@@ -37,6 +40,23 @@ def get_db():
 @app.on_event("startup")
 def on_startup():
     CreateTables()
+    paddle.set_flags({
+        "FLAGS_fraction_of_cpu_memory_to_use": 0.5,
+        "FLAGS_use_pinned_memory": False
+    })
+    global ocr_engine
+    ocr_engine = PaddleOCR(
+        use_doc_orientation_classify=False,
+        use_doc_unwarping=False,
+        use_textline_orientation=False,
+        text_detection_model_dir="PaddleOcrModal/PP-OCRv5_mobile_det_infer",
+        text_recognition_model_dir="PaddleOcrModal/PP-OCRv5_mobile_rec_infer",
+        text_detection_model_name="PP-OCRv5_mobile_det",
+        text_recognition_model_name="PP-OCRv5_mobile_rec",
+        lang="en",
+        cpu_threads=2
+    )
+    print("[App] PaddleOCR initialized.")
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request:Request):
@@ -66,7 +86,10 @@ async def upload_file(file: UploadFile = File(...), db:Session = Depends(get_db)
         if(engine == "tesseract"):
             ocr_result = TeserractExtractor(image_path)
         elif(engine == "paddleocr"):
-            ocr_result = PaddleExtractor(image_paths=image_path)
+            print("++++++++++++++++++++++++++++++++++++++++++++++++++")
+            if(ocr_engine is not None):
+                ocr_result = PaddleExtractor(ocr_engine=ocr_engine, image_paths=image_path)
+            print(ocr_result)
             
         #Databased insertion
         InsertOcrResults(db=db, page_count=len(image_path), file_name=file.filename,engine=engine, ocr_result=ocr_result)

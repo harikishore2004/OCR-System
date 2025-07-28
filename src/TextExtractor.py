@@ -1,7 +1,5 @@
 import pytesseract
 from PIL import Image
-from paddleocr import PaddleOCR
-import paddle
 from collections import defaultdict
 from fastapi import HTTPException
 
@@ -62,31 +60,16 @@ def TeserractExtractor(image_paths:list) -> list[list[dict]]:
         raise HTTPException(
             status_code = 500, 
             detail=f"Text extraction using Terserract failed"
-            )
+        )
                 
         
-def PaddleExtractor(image_paths:list) -> list[list[dict]]:  
+def PaddleExtractor(ocr_engine, image_paths:list) -> list[list[dict]]:  
+      
     try:   
-        paddle.set_flags({
-        "FLAGS_fraction_of_cpu_memory_to_use": 0.5,  
-        "FLAGS_use_pinned_memory": False
-        })
-        ocr = PaddleOCR(
-            use_doc_orientation_classify=False, 
-            use_doc_unwarping=False,
-            use_textline_orientation=False,
-            text_detection_model_dir="PaddleOcrModal/PP-OCRv5_mobile_det_infer",
-            text_recognition_model_dir="PaddleOcrModal/PP-OCRv5_mobile_rec_infer",
-            text_detection_model_name="PP-OCRv5_mobile_det",
-            text_recognition_model_name="PP-OCRv5_mobile_rec",
-            lang="en",
-            cpu_threads=2
-            )
-        output = []
-        
+        output = []   
         for path in image_paths:
             line_result = []
-            result = ocr.predict(path)
+            result = ocr_engine.predict(path)
             for res in result:
                 # res.print()
                 #res.save_to_img(path)
@@ -109,13 +92,15 @@ def PaddleExtractor(image_paths:list) -> list[list[dict]]:
                         'height': height
                     })
             output.append(line_result)
+        print(output)
         return output
  
     except Exception as e:
+
         raise HTTPException(
             status_code = 500, 
             detail=f"Text extraction using Paddle OCR failed"
-            )
+        )
     
 
     
