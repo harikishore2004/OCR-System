@@ -9,7 +9,6 @@ from src.ImageConverter import Converter
 from src.TextExtractor import TeserractExtractor, PaddleExtractor
 from src.DataBaseSchema import Files, OCR_Results, SessionLocal, CreateTables
 from src.DbOperations import InsertOcrResults
-from src.PaddleEngine import InitiatePaddleEngine
 from collections import defaultdict
 import paddle
 from paddleocr import PaddleOCR
@@ -18,8 +17,6 @@ app = FastAPI()
 ocr_engine = None
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
-app.mount("/uploads", StaticFiles(directory="uploads"), name="uploads")
-
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"], 
@@ -28,6 +25,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 templates = Jinja2Templates(directory="templates")
+
 
 def get_db():
     db = SessionLocal()
@@ -56,7 +54,7 @@ def on_startup():
         lang="en",
         cpu_threads=2
     )
-    print("[App] PaddleOCR initialized.")
+
 
 @app.get("/", response_class=HTMLResponse)
 async def read_root(request:Request):
@@ -86,10 +84,8 @@ async def upload_file(file: UploadFile = File(...), db:Session = Depends(get_db)
         if(engine == "tesseract"):
             ocr_result = TeserractExtractor(image_path)
         elif(engine == "paddleocr"):
-            print("++++++++++++++++++++++++++++++++++++++++++++++++++")
             if(ocr_engine is not None):
                 ocr_result = PaddleExtractor(ocr_engine=ocr_engine, image_paths=image_path)
-            print(ocr_result)
             
         #Databased insertion
         InsertOcrResults(db=db, page_count=len(image_path), file_name=file.filename,engine=engine, ocr_result=ocr_result)
@@ -145,7 +141,6 @@ def fetch_data(db:Session = Depends(get_db)):
         target_dict = singelpage_doc if page_count==1 else multipage_doc
         
         target_dict[file_name][str(row.page_number)].append(entry)
-        # target_dict[file_name]["engine"] = engine
     return JSONResponse({
         "single_page_doc": singelpage_doc,
         "multi_page_doc": multipage_doc
