@@ -53,8 +53,7 @@ def TeserractExtractor(image_paths:list) -> list[list[dict]]:
                 })
             
                 # DrawBox(image=image, boxes=line_result, save_path=path)
-            output.append(line_result)
-            
+            output.append(line_result)     
         return output
     except Exception as e:
         raise HTTPException(
