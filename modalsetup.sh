@@ -1,9 +1,11 @@
+#!/bin/bash
 REC_MODEL_URL="https://paddle-model-ecology.bj.bcebos.com/paddlex/official_inference_model/paddle3.0.0/PP-OCRv5_mobile_det_infer.tar"
 DET_MODEL_URL="https://paddle-model-ecology.bj.bcebos.com/paddlex/official_inference_model/paddle3.0.0//PP-OCRv5_mobile_rec_infer.tar"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-
 TARGET_DIR="$SCRIPT_DIR/PaddleOcrModal"
+
+echo "Dir $TARGET_DIR does not exists, continuing..."
 mkdir -p "$TARGET_DIR"
 
 REC_TAR="rec_model.tar"

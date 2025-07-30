@@ -34,7 +34,7 @@ def get_db():
     finally:
         db.close()
      
-     
+    
 @app.on_event("startup")
 def on_startup():
     CreateTables()

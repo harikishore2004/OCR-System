@@ -9,6 +9,9 @@ RUN apt-get update && \
         libtesseract-dev \
         poppler-utils \
         libgl1 \
+        curl \
+        tar \
+        bash \
         tzdata && \
     ln -fs /usr/share/zoneinfo/Asia/Kolkata /etc/localtime && \
     dpkg-reconfigure -f noninteractive tzdata && \
@@ -19,10 +22,11 @@ WORKDIR /app
 
 COPY . /app/
 
+RUN chmod +x modalsetup.sh
+RUN bash ./modalsetup.sh
+
 RUN pip install --no-cache-dir -r requirements.txt
 
-RUN chmod +x modalsetup.sh \ 
-    ./modalsetup.sh
 
 EXPOSE 8000
 
