@@ -41,10 +41,15 @@ def SaveFile(file: UploadFile, filename:str):
         return file_path, ext
  
     except Exception as e:
+        
         raise HTTPException(
-            status_code = 500,
-            detail=e.detail
-            )
+            status_code = 500, 
+            detail={
+                "error": "File save failed",
+                "fname": "SaveFile"
+            }       
+        )
+
     
 
     

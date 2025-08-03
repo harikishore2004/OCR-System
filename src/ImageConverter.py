@@ -31,9 +31,12 @@ def Converter(path:str, ext:str) -> list[str]:
                 )
         return image_paths
     except Exception as e:
+        
         raise HTTPException(
-            status_code = 500,
-            detail=f"Image conversion failed"
-            )
-    
+            status_code = 500, 
+            detail={
+                "error": "Image conversion failed",
+                "fname": "Converter"
+            }       
+        )
         

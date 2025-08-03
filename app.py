@@ -8,7 +8,8 @@ from src.Util import SaveFile
 from src.ImageConverter import Converter
 from src.TextExtractor import TeserractExtractor, PaddleExtractor
 from src.DataBaseSchema import Files, OCR_Results, SessionLocal, CreateTables
-from src.DbOperations import InsertOcrResults
+from src.DbOperations import InsertOcrResults, InsertFile
+from src.Logger import Logger
 from collections import defaultdict
 import paddle
 from paddleocr import PaddleOCR
@@ -66,38 +67,67 @@ async def read_root(request:Request):
 async def upload_file(file: UploadFile = File(...), db:Session = Depends(get_db), engine: str = Form(...)):
     
     try:
-           
+         
+        logger = Logger(file_name=file.filename)
+                   
         allowed_types = ["application/pdf", "image/tiff"]  
         if file.content_type not in allowed_types:
-            raise HTTPException(status_code = 400, detail=f"File format is not supported")
+            raise HTTPException(
+                status_code = 400, 
+                detail={
+                    "error": "File format is not supported",
+                    "fname": "FileTypeDetector"
+                }       
+            )
         if engine not in ["paddleocr", "tesseract"]:
-            raise HTTPException(status_code=400, detail=f"{engine} is not supported")
-        
+            raise HTTPException(
+                status_code = 400, 
+                detail={
+                    "error": f"{engine} is not supported",
+                    "fname": "EngineDetector"
+                }       
+            )     
         
         #save the uploaded documents
-        file_path, ext = SaveFile(file, file.filename) 
+        file_path, ext = SaveFile(file, file.filename)
+        logger.AddLog(db=db, function_name="SaveFile", status="success", message=f"Saved file to path - {file_path}")
         
         #converts the documents to .png format
         image_path = Converter(file_path, ext) 
+        logger.AddLog(db=db, function_name="Converter", status="success", message=f"Image conversion completed")
+
+        
+        file_id = InsertFile(db=db, page_count=len(image_path), file_name=file.filename, engine=engine)
+        logger.AddLog(db=db, function_name="InsertFile", status="success", message=f"File info inserted to DB")
+
         
         #Extract the text 
         if(engine == "tesseract"):
             ocr_result = TeserractExtractor(image_path)
+            logger.AddLog(db=db, function_name="TeserractExtractor", status="success", message=f"Extracted text using Teserract engine")
+
         elif(engine == "paddleocr"):
             if(ocr_engine is not None):
                 ocr_result = PaddleExtractor(ocr_engine=ocr_engine, image_paths=image_path)
-            
+                logger.AddLog(db=db, function_name="PaddleExtractor", status="success", message=f"Extracted text using Paddle engine")
+     
         #Databased insertion
-        InsertOcrResults(db=db, page_count=len(image_path), file_name=file.filename,engine=engine, ocr_result=ocr_result)
+        InsertOcrResults(db=db, file_id=file_id, ocr_result=ocr_result)
+        logger.AddLog(db=db, function_name="InsertOcrResults", status="success", message=f"Ocr results inserted to DB")
+
+        logger.CommitLogs(db)
         return JSONResponse(
             status_code = 200,
             content={"message": "File Processed!", "category": "success"}
         )
         
     except HTTPException as e:
+        
+        logger.AddLog(db=db, function_name=e.detail.get("fname"), status="error", message=e.detail.get("error"))
+        logger.CommitLogs(db=db)
         return JSONResponse(
             status_code=e.status_code,
-            content={"message": e.detail, "category": "error"}
+            content={"message": e.detail.get("error"), "category": "error"}
         )
 
 @app.get("/fetchdata")
