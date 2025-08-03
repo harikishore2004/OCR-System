@@ -66,6 +66,7 @@ async def read_root(request:Request):
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...), db:Session = Depends(get_db), engine: str = Form(...)):
     
+    filename = f""
     try:
          
         logger = Logger(file_name=file.filename)
@@ -165,7 +166,7 @@ def fetch_data(db:Session = Depends(get_db)):
             
         }
         
-        file_name = file_data["file_name"]
+        file_name = f"{file_data["file_name"]}_id{row.file_id}"
         page_count = file_data["page_count"] 
         engine = file_data["engine"]       
         target_dict = singelpage_doc if page_count==1 else multipage_doc

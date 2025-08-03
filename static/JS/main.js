@@ -42,7 +42,7 @@ function renderPage(docno) {
     else {
         tablecontainer.innerHTML = "";
         const heading = document.createElement("h5");
-        heading.innerText = docnames[docno];
+        heading.innerText = docnames[docno].slice(0, -4);
         heading.classList.add("mt-4", "text-primary", "fw-bold");
         tablecontainer.appendChild(heading);
 

@@ -1,7 +1,8 @@
 from pathlib import Path
 from fastapi import HTTPException
-import os
 from fastapi import UploadFile
+import os
+import datetime
 
 
 def EnsureFolder(path:str):
@@ -11,14 +12,14 @@ def EnsureFolder(path:str):
         raise HTTPException(
             status_code = 500,
             detail="File already exists, Rename your file"
-            )
-        
-        
+        )
+             
 def SaveFile(file: UploadFile, filename:str):
     
     try:  
         temp = filename.split(".")
-        folder_name = temp[0]
+        timestamp = datetime.datetime.now().strftime("%d%m%Y_%H%M%S")
+        folder_name = f"{temp[0]}_{timestamp}"
         ext = temp[1]
         file_path = ""
         
