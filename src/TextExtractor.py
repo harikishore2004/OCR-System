@@ -58,7 +58,10 @@ def TeserractExtractor(image_paths:list) -> list[list[dict]]:
     except Exception as e:
         raise HTTPException(
             status_code = 500, 
-            detail=f"Text extraction using Terserract failed"
+            detail={
+                "error": "Text extraction using Terserract failed",
+                "fname": "TeserractExtractor"
+            }       
         )
                 
         
@@ -95,10 +98,12 @@ def PaddleExtractor(ocr_engine, image_paths:list) -> list[list[dict]]:
         return output
  
     except Exception as e:
-
         raise HTTPException(
             status_code = 500, 
-            detail=f"Text extraction using Paddle OCR failed"
+            detail={
+                "error": "Text extraction using Paddle OCR failed",
+                "fname": "PaddleExtractor"
+            }       
         )
     
 
